@@ -1,4 +1,4 @@
-﻿namespace Discount.API.Entities
+﻿namespace Discount.Grpc.Entities
 {
     public class Campaign
     {
@@ -8,6 +8,5 @@
         public int Duration { get; set; }
         public double PriceManipulationLimit { get; set; }
         public int TargetSalesCount { get; set; }
-
     }
 }
