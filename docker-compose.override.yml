@@ -61,6 +61,14 @@ services:
     ports:
       - "8003:80"
 
+ catalog.grpc:
+    container_name: catalog.grpc
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - "DatabaseSettings:ConnectionString=mongodb://catalogdb:27017"
+    ports:
+      - "8006:80"
+
  ordering.api:
     container_name: ordering.api
     environment:
@@ -71,3 +79,5 @@ services:
        - orderdb
     ports:
         - "8004:80"
+
+ 

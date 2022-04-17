@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+option csharp_namespace = "Catalog.Grpc.Protos";
+
+service CatalogProtoService {
+	rpc GetProduct (GetProductRequest) returns (ProductModel);
+
+	rpc CreateProduct (CreateProductRequest) returns (ProductModel);
+	rpc UpdateProduct (UpdateProductRequest) returns (ProductModel);
+	rpc DeleteProduct (DeleteProductRequest) returns (DeleteProductResponse);
+}
+
+message GetProductRequest {
+	string productCode = 1;	
+}
+
+message ProductModel {
+	string id = 1;
+	string productCode = 2;
+	int32 price = 3;
+
+}
+
+message CreateProductRequest {
+	ProductModel product = 1;
+}
+
+message UpdateProductRequest {
+	ProductModel product = 1;
+}
+
+message DeleteProductRequest {
+	string product = 1;
+}
+
+message DeleteProductResponse {
+	bool success = 1;
+}
