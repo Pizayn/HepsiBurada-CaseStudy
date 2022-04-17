@@ -21,9 +21,9 @@ namespace Discount.API.Controllers
 
         [HttpGet("{productCode}", Name = "GetCampaign")]
         [ProducesResponseType(typeof(Campaign), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<Campaign>> GetCampaign(string productName)
+        public async Task<ActionResult<Campaign>> GetCampaign(string productCode)
         {
-            var campaign = await _repository.GetCampaign(productName);
+            var campaign = await _repository.GetCampaign(productCode);
             return Ok(campaign);
         }
 
@@ -32,7 +32,7 @@ namespace Discount.API.Controllers
         public async Task<ActionResult<Campaign>> CreateCampaign([FromBody] Campaign campaign)
         {
             await _repository.CreateCampaign(campaign);
-            return CreatedAtRoute("GetCampaign", new { productName = campaign.ProductCode }, campaign);
+            return CreatedAtRoute("GetCampaign", new { productCode = campaign.ProductCode }, campaign);
         }
 
         [HttpPut]

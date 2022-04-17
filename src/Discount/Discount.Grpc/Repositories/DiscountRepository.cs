@@ -37,8 +37,8 @@ namespace Discount.API.Repositories
 
             var affected =
                 await connection.ExecuteAsync
-                    ("INSERT INTO Campaign (ProductCode, TargetSalesCount) VALUES (@ProductCode, @Description, @TargetSalesCount)",
-                            new { ProductCode = campaign.ProductCode, TargetSalesCount = campaign.TargetSalesCount });
+                    ("INSERT INTO Campaign (Name,ProductCode,Duration,PriceManipulationLimit, TargetSalesCount) VALUES (@Name,@ProductCode,@Duration,@PriceManipulationLimit, @TargetSalesCount)",
+                            new {Name= campaign.Name, ProductCode = campaign.ProductCode,Duration=campaign.Duration, PriceManipulationLimit=campaign.PriceManipulationLimit, TargetSalesCount = campaign.TargetSalesCount });
 
             if (affected == 0)
                 return false;

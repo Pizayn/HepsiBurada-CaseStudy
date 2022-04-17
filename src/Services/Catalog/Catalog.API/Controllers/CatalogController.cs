@@ -1,4 +1,5 @@
 ﻿using Catalog.API.Entities;
+using Catalog.API.GrpcServices;
 using Catalog.API.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -15,11 +16,14 @@ namespace Catalog.API.Controllers
     {
         private readonly IProductRepository _repository;
         private readonly ILogger<CatalogController> _logger;
+        private readonly DiscountGrpcService _discountGrpcService;
 
-        public CatalogController(IProductRepository repository, ILogger<CatalogController> logger)
+        public CatalogController(IProductRepository repository, DiscountGrpcService discountGrpcService, ILogger<CatalogController> logger)
         {
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _discountGrpcService = discountGrpcService ?? throw new ArgumentNullException(nameof(discountGrpcService));
+
         }
 
         [HttpGet]
@@ -44,7 +48,23 @@ namespace Catalog.API.Controllers
             return Ok(product);
         }
 
-       
+        [HttpGet("[action]/{productCode}", Name = "GetProductByProductCode")]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(Product), (int)HttpStatusCode.OK)]
+        public async Task<ActionResult<Product>> GetProductByProductCode(string productCode)
+        {
+            var product = await _repository.GetProductByProductCode(productCode);
+            var coupon = await _discountGrpcService.GetCampaign(productCode);
+            if (product == null)
+            {
+                _logger.LogError($"Product with code: {productCode}, not found.");
+                return NotFound();
+            }
+            product.Price -= coupon.PriceManipulationLimit;
+            return Ok(product);
+        }
+
+
         [HttpPost]
         [ProducesResponseType(typeof(Product), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<Product>> CreateProduct([FromBody] Product product)

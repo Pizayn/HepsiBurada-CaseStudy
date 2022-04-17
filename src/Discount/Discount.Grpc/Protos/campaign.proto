@@ -3,14 +3,14 @@ syntax = "proto3";
 option csharp_namespace = "Discount.Grpc.Protos";
 
 service DiscountProtoService {
-	rpc GetDiscount (GetDiscountRequest) returns (CampaignModel);
+	rpc GetCampaign (GetCampaignRequest) returns (CampaignModel);
 
-	rpc CreateDiscount (CreateDiscountRequest) returns (CampaignModel);
-	rpc UpdateDiscount (UpdateDiscountRequest) returns (CampaignModel);
-	rpc DeleteDiscount (DeleteDiscountRequest) returns (DeleteDiscountResponse);
+	rpc CreateCampaign (CreateCampaignRequest) returns (CampaignModel);
+	rpc UpdateCampaign (UpdateCampaignRequest) returns (CampaignModel);
+	rpc DeleteCampaign (DeleteCampaignRequest) returns (DeleteCampaignResponse);
 }
 
-message GetDiscountRequest {
+message GetCampaignRequest {
 	string productCode = 1;	
 }
 
@@ -24,18 +24,18 @@ message CampaignModel {
 
 }
 
-message CreateDiscountRequest {
+message CreateCampaignRequest {
 	CampaignModel campaign = 1;
 }
 
-message UpdateDiscountRequest {
+message UpdateCampaignRequest {
 	CampaignModel campaign = 1;
 }
 
-message DeleteDiscountRequest {
+message DeleteCampaignRequest {
 	string productCode = 1;
 }
 
-message DeleteDiscountResponse {
+message DeleteCampaignResponse {
 	bool success = 1;
 }

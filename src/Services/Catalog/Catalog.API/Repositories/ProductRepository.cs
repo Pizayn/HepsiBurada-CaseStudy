@@ -60,6 +60,14 @@ namespace Catalog.API.Repositories
             return deleteResult.IsAcknowledged
                 && deleteResult.DeletedCount > 0;
         }
+
+        public async Task<Product> GetProductByProductCode(string productCode)
+        {
+            return await _context
+                                     .Products
+                                     .Find(p => p.ProductCode == productCode)
+                                     .FirstOrDefaultAsync();
+        }
     }
 
 }

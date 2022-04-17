@@ -1,5 +1,7 @@
 using Catalog.API.Data;
+using Catalog.API.GrpcServices;
 using Catalog.API.Repositories;
+using Discount.Grpc.Protos;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -34,8 +36,13 @@ namespace Catalog.API
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Catalog.API", Version = "v1" });
             });
 
+          
             services.AddScoped<ICatalogContext, CatalogContext>();
             services.AddScoped<IProductRepository, ProductRepository>();
+
+            services.AddGrpcClient<DiscountProtoService.DiscountProtoServiceClient>
+            (o => o.Address = new Uri(Configuration["GrpcSettings:DiscountUrl"]));
+            services.AddScoped<DiscountGrpcService>();
 
         }
 
