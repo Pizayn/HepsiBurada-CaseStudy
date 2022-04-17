@@ -1,6 +1,7 @@
 ﻿using Catalog.API.Entities;
 using Catalog.API.GrpcServices;
 using Catalog.API.Repositories;
+using Discount.Grpc.Protos;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -57,15 +58,23 @@ namespace Catalog.API.Controllers
             var time =await _timeRepository.GetTime();
             var hour = time.Hour == 0 ? 1 : time.Hour;
             var product = await _repository.GetProductByProductCode(productCode);
-            var coupon = await _discountGrpcService.GetCampaign(productCode);
+            var campaign = await _discountGrpcService.GetCampaign(productCode);
+
+
             if (product == null)
             {
                 _logger.LogError($"Product with code: {productCode}, not found.");
                 return NotFound();
             }
-            if(coupon !=null)
+            if(campaign != null)
             {
-                var descentRate = ((double)coupon.PriceManipulationLimit / (double)coupon.Duration) * hour;
+                if(campaign.Duration > hour)
+                {
+                    UpdateCampaignRequest updateCampaignRequest = new UpdateCampaignRequest();
+                    updateCampaignRequest.Campaign = campaign;
+                    await _discountGrpcService.UpdateCampaign(updateCampaignRequest);
+                }
+                var descentRate = ((double)campaign.PriceManipulationLimit / (double)campaign.Duration) * hour;
                 product.Price -=  product.Price * descentRate /100;
 
             }
@@ -115,15 +124,6 @@ namespace Catalog.API.Controllers
 
                return Ok();
         }
-        //[HttpGet(Name = "IncreaseTime")]
-        //[ProducesResponseType(typeof(Time), (int)HttpStatusCode.OK)]
-        //public async Task<ActionResult<Time>> IncreaseTime([FromBody] Time time)
-        //{
-        //    var existTime = await _timeRepository.GetTime();
-
-        //    await _timeRepository.UpdateTime(time);
-
-        //    return Ok();
-        //}
+       
     }
 }
