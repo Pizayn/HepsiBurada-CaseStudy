@@ -21,7 +21,7 @@ namespace Discount.API.Repositories
                 (_configuration.GetValue<string>("DatabaseSettings:ConnectionString"));
 
             var campaign = await connection.QueryFirstOrDefaultAsync<Campaign>
-                ("SELECT * FROM Campaign WHERE ProductCode = @ProductCode", new { ProductCode = productCode });
+                ("SELECT * FROM Campaign WHERE ProductCode = @ProductCode AND Status = @Status", new { ProductCode = productCode , Status = 0});
 
             if (campaign == null)
                 return new Campaign
@@ -37,8 +37,8 @@ namespace Discount.API.Repositories
 
             var affected =
                 await connection.ExecuteAsync
-                    ("INSERT INTO Campaign (Name,ProductCode,Duration,PriceManipulationLimit, TargetSalesCount) VALUES (@Name,@ProductCode,@Duration,@PriceManipulationLimit, @TargetSalesCount)",
-                            new {Name= campaign.Name, ProductCode = campaign.ProductCode,Duration=campaign.Duration, PriceManipulationLimit=campaign.PriceManipulationLimit, TargetSalesCount = campaign.TargetSalesCount });
+                    ("INSERT INTO Campaign (Name,ProductCode,Duration,PriceManipulationLimit, TargetSalesCount,Status) VALUES (@Name,@ProductCode,@Duration,@PriceManipulationLimit, @TargetSalesCount,@Status)",
+                            new {Name= campaign.Name, ProductCode = campaign.ProductCode,Duration=campaign.Duration, PriceManipulationLimit=campaign.PriceManipulationLimit, TargetSalesCount = campaign.TargetSalesCount,Status=1 });
 
             if (affected == 0)
                 return false;
@@ -51,8 +51,8 @@ namespace Discount.API.Repositories
             using var connection = new NpgsqlConnection(_configuration.GetValue<string>("DatabaseSettings:ConnectionString"));
 
             var affected = await connection.ExecuteAsync
-                    ("UPDATE Campaign SET ProductCode=@ProductCode , TargetSalesCount = @TargetSalesCount WHERE Id = @Id",
-                            new { ProductCode = campaign.ProductCode, TargetSalesCount = campaign.TargetSalesCount, Id = campaign.Id });
+                    ("UPDATE Campaign SET ProductCode=@ProductCode , TargetSalesCount = @TargetSalesCount, @Status WHERE Id = @Id",
+                            new { ProductCode = campaign.ProductCode, TargetSalesCount = campaign.TargetSalesCount,Status=campaign.Status, Id = campaign.Id });
 
             if (affected == 0)
                 return false;

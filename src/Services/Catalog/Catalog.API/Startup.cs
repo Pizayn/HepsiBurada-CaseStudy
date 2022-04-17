@@ -39,6 +39,7 @@ namespace Catalog.API
           
             services.AddScoped<ICatalogContext, CatalogContext>();
             services.AddScoped<IProductRepository, ProductRepository>();
+            services.AddScoped<ITimeRepository, TimeRepository>();
 
             services.AddGrpcClient<DiscountProtoService.DiscountProtoServiceClient>
             (o => o.Address = new Uri(Configuration["GrpcSettings:DiscountUrl"]));

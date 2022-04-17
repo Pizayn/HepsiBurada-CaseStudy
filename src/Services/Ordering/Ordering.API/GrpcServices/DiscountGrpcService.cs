@@ -17,5 +17,10 @@ namespace Ordering.API.GrpcServices
             var discountRequest = new GetCampaignRequest { ProductCode = productCode };
             return await _discountProtoService.GetCampaignAsync(discountRequest);
         }
+
+        public async Task<CampaignModel> UpdateCampaign(UpdateCampaignRequest campaign)
+        {
+            return await _discountProtoService.UpdateCampaignAsync(campaign);
+        }
     }
 }

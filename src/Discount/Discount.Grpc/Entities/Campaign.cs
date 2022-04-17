@@ -1,4 +1,6 @@
-﻿namespace Discount.Grpc.Entities
+﻿using Discount.Grpc.Enum;
+
+namespace Discount.Grpc.Entities
 {
     public class Campaign
     {
@@ -8,5 +10,7 @@
         public int Duration { get; set; }
         public double PriceManipulationLimit { get; set; }
         public int TargetSalesCount { get; set; }
+
+        public int Status { get;  set; }
     }
 }

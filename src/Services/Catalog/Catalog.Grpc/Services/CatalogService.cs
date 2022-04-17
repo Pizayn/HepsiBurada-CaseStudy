@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Catalog.Grpc.Entities;
 using Catalog.Grpc.Protos;
 using Catalog.Grpc.Repositories;
 using Grpc.Core;
@@ -32,6 +33,17 @@ namespace Catalog.Grpc.Services
 
             var productModel = _mapper.Map<ProductModel>(product);
             return productModel;
+        }
+
+        public override async Task<ProductModel> UpdateProduct(UpdateProductRequest request, ServerCallContext context)
+        {
+            var product = _mapper.Map<Product>(request.Product);
+
+            await _repository.UpdateProduct(product);
+            _logger.LogInformation("Product is successfully updated. ProductCode : {ProductCode}", product.ProductCode);
+
+            var couponModel = _mapper.Map<ProductModel>(product);
+            return couponModel;
         }
     }
 }

@@ -24,14 +24,14 @@ namespace Discount.Grpc.Services
 
         public override async Task<CampaignModel> GetCampaign(GetCampaignRequest request, ServerCallContext context)
         {
-            var coupon = await _repository.GetCampaign(request.ProductCode);
-            if (coupon == null)
+            var campaign = await _repository.GetCampaign(request.ProductCode);
+            if (campaign == null)
             {
                 throw new RpcException(new Status(StatusCode.NotFound, $"Campaign with ProductName={request.ProductCode} is not found."));
             }
-            _logger.LogInformation("Campaign is retrieved for ProductCode : {productCode}, Amount : {targetSalesCount}", coupon.ProductCode, coupon.TargetSalesCount);
+            _logger.LogInformation("Campaign is retrieved for ProductCode : {productCode}, Amount : {targetSalesCount}", campaign.ProductCode, campaign.TargetSalesCount);
 
-            var couponModel = _mapper.Map<CampaignModel>(coupon);
+            var couponModel = _mapper.Map<CampaignModel>(campaign);
             return couponModel;
         }
 
@@ -48,12 +48,12 @@ namespace Discount.Grpc.Services
 
         public override async Task<CampaignModel> UpdateCampaign(UpdateCampaignRequest request, ServerCallContext context)
         {
-            var coupon = _mapper.Map<Campaign>(request.Campaign);
+            var campaign = _mapper.Map<Campaign>(request.Campaign);
+            campaign.Status = campaign.TargetSalesCount > 0 ? 1 : 0; 
+            await _repository.UpdateCampaign(campaign);
+            _logger.LogInformation("Campaign is successfully updated. ProductCode : {ProductCode}", campaign.ProductCode);
 
-            await _repository.UpdateCampaign(coupon);
-            _logger.LogInformation("Discount is successfully updated. ProductCode : {ProductCode}", coupon.ProductCode);
-
-            var couponModel = _mapper.Map<CampaignModel>(coupon);
+            var couponModel = _mapper.Map<CampaignModel>(campaign);
             return couponModel;
         }
 

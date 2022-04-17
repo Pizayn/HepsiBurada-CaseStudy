@@ -10,10 +10,15 @@ namespace Catalog.API.Entities
         public string Id { get; set; }
 
         [BsonElement("ProductCode")]
+        [BsonRequired]
         public string ProductCode { get; set; }
         [BsonElement("Stock")]
+        [BsonRequired]
+
         public int Stock { get; set; }
         [BsonElement("Price")]
-        public decimal Price { get; set; }
+        [BsonRequired]
+
+        public double Price { get; set; }
     }
 }

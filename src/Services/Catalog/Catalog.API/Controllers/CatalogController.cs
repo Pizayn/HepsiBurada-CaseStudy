@@ -17,13 +17,14 @@ namespace Catalog.API.Controllers
         private readonly IProductRepository _repository;
         private readonly ILogger<CatalogController> _logger;
         private readonly DiscountGrpcService _discountGrpcService;
+        private readonly ITimeRepository _timeRepository;
 
-        public CatalogController(IProductRepository repository, DiscountGrpcService discountGrpcService, ILogger<CatalogController> logger)
+        public CatalogController(IProductRepository repository, ITimeRepository timeRepository, DiscountGrpcService discountGrpcService, ILogger<CatalogController> logger)
         {
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+            _timeRepository = timeRepository ?? throw new ArgumentNullException(nameof(timeRepository)); ;
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _discountGrpcService = discountGrpcService ?? throw new ArgumentNullException(nameof(discountGrpcService));
-
         }
 
         [HttpGet]
@@ -53,6 +54,8 @@ namespace Catalog.API.Controllers
         [ProducesResponseType(typeof(Product), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<Product>> GetProductByProductCode(string productCode)
         {
+            var time =await _timeRepository.GetTime();
+            var hour = time.Hour == 0 ? 1 : time.Hour;
             var product = await _repository.GetProductByProductCode(productCode);
             var coupon = await _discountGrpcService.GetCampaign(productCode);
             if (product == null)
@@ -60,7 +63,12 @@ namespace Catalog.API.Controllers
                 _logger.LogError($"Product with code: {productCode}, not found.");
                 return NotFound();
             }
-            product.Price -= coupon.PriceManipulationLimit;
+            if(coupon !=null)
+            {
+                var descentRate = ((double)coupon.PriceManipulationLimit / (double)coupon.Duration) * hour;
+                product.Price -=  product.Price * descentRate /100;
+
+            }
             return Ok(product);
         }
 
@@ -69,6 +77,13 @@ namespace Catalog.API.Controllers
         [ProducesResponseType(typeof(Product), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<Product>> CreateProduct([FromBody] Product product)
         {
+            var existProduct = await _repository.GetProductByProductCode(product.ProductCode);
+            if(existProduct != null)
+            {
+                _logger.LogError($"You can not create same productCode: {product.ProductCode}.");
+                return BadRequest();
+
+            }
             await _repository.CreateProduct(product);
 
             return CreatedAtRoute("GetProduct", new { id = product.Id }, product);
@@ -87,5 +102,28 @@ namespace Catalog.API.Controllers
         {
             return Ok(await _repository.DeleteProduct(id));
         }
+
+
+        [HttpGet("[action]/{hour}", Name = "IncreaseTime")]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(Time), (int)HttpStatusCode.OK)]
+        public async Task<ActionResult<Time>> IncreaseTime(int hour)
+        {
+            var existTime = await _timeRepository.GetTime();
+            existTime.Hour = hour;
+            await _timeRepository.UpdateTime(existTime);
+
+               return Ok();
+        }
+        //[HttpGet(Name = "IncreaseTime")]
+        //[ProducesResponseType(typeof(Time), (int)HttpStatusCode.OK)]
+        //public async Task<ActionResult<Time>> IncreaseTime([FromBody] Time time)
+        //{
+        //    var existTime = await _timeRepository.GetTime();
+
+        //    await _timeRepository.UpdateTime(time);
+
+        //    return Ok();
+        //}
     }
 }

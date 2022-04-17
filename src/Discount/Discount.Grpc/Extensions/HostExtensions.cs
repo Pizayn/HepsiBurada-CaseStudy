@@ -38,8 +38,8 @@ namespace Discount.Grpc.Extensions
                                                                 ProductCode VARCHAR(24) NOT NULL,
                                                                 Duration INT,
                                                                 PriceManipulationLimit DOUBLE PRECISION,
-
-                                                                TargetSalesCount INT)";
+                                                                TargetSalesCount INT,
+                                                                Status INT)";
                     command.ExecuteNonQuery();
 
 
