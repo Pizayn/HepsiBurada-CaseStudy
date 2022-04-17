@@ -21,7 +21,6 @@
 
 #### Microservices Communication
 * Sync inter-service **gRPC Communication**
-* Async Microservices Communication with **RabbitMQ Message-Broker Service**
 
 
 #### Ordering Microservice
