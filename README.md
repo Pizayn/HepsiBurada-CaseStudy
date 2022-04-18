@@ -5,7 +5,7 @@
 
 #### Catalog microservice which includes; 
 * ASP.NET **Grpc Server** application
-* * Build a Highly Performant **inter-service gRPC Communication** with Basket Microservice
+* Build a Highly Performant **inter-service gRPC Communication** with Basket Microservice
 * ASP.NET Core Web API application 
 * REST API principles, CRUD operations
 * **MongoDB database** connection and containerization
@@ -21,7 +21,6 @@
 
 #### Microservices Communication
 * Sync inter-service **gRPC Communication**
-* Async Microservices Communication with **RabbitMQ Message-Broker Service**
 
 
 #### Ordering Microservice
