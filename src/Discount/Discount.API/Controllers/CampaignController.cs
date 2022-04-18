@@ -1,5 +1,6 @@
 ﻿using Discount.API.Entities;
 using Discount.API.Repositories;
+using Discount.API.Services;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -13,17 +14,26 @@ namespace Discount.API.Controllers
     public class CampaignController : ControllerBase
     {
         private readonly IDiscountRepository _repository;
+        private readonly ITimeService _timeService;
 
-        public CampaignController(IDiscountRepository repository)
+        public CampaignController(IDiscountRepository repository, ITimeService timeService)
         {
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+            _timeService = timeService ?? throw new ArgumentNullException(nameof(timeService));
         }
 
         [HttpGet("{productCode}", Name = "GetCampaign")]
         [ProducesResponseType(typeof(Campaign), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<Campaign>> GetCampaign(string productCode)
         {
+            var time = await _timeService.GetTime();
             var campaign = await _repository.GetCampaign(productCode);
+            if(time.Hour > campaign.Duration)
+            {
+                campaign.Status = 0;
+               await  _repository.UpdateCampaign(campaign);
+                return Ok(campaign = null);
+            }
             return Ok(campaign);
         }
 

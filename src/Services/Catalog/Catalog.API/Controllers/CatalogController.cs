@@ -68,12 +68,12 @@ namespace Catalog.API.Controllers
             }
             if(campaign != null)
             {
-                if(campaign.Duration > hour)
-                {
-                    UpdateCampaignRequest updateCampaignRequest = new UpdateCampaignRequest();
-                    updateCampaignRequest.Campaign = campaign;
-                    await _discountGrpcService.UpdateCampaign(updateCampaignRequest);
-                }
+                //if(campaign.Duration > hour)
+                //{
+                //    UpdateCampaignRequest updateCampaignRequest = new UpdateCampaignRequest();
+                //    updateCampaignRequest.Campaign = campaign;
+                //    await _discountGrpcService.UpdateCampaign(updateCampaignRequest);
+                //}
                 var descentRate = ((double)campaign.PriceManipulationLimit / (double)campaign.Duration) * hour;
                 product.Price -=  product.Price * descentRate /100;
 

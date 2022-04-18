@@ -1,6 +1,5 @@
 ﻿using Dapper;
 using Discount.API.Entities;
-using Discount.API.Enum;
 using Microsoft.Extensions.Configuration;
 using Npgsql;
 using System;
@@ -22,7 +21,7 @@ namespace Discount.API.Repositories
                 (_configuration.GetValue<string>("DatabaseSettings:ConnectionString"));
 
             var campaign = await connection.QueryFirstOrDefaultAsync<Campaign>
-                ("SELECT * FROM Campaign WHERE ProductCode = @ProductCode and Status = @Status", new { ProductCode = productCode, Status=0});
+                ("SELECT * FROM Campaign WHERE ProductCode = @ProductCode and Status = @Status AND TargetSalesCount > 0", new { ProductCode = productCode, Status=1});
 
             if (campaign == null)
                 return new Campaign
@@ -52,8 +51,8 @@ namespace Discount.API.Repositories
             using var connection = new NpgsqlConnection(_configuration.GetValue<string>("DatabaseSettings:ConnectionString"));
 
             var affected = await connection.ExecuteAsync
-                    ("UPDATE Campaign SET ProductCode=@ProductCode , TargetSalesCount = @TargetSalesCount, @Status WHERE Id = @Id",
-                            new { ProductCode = campaign.ProductCode, TargetSalesCount = campaign.TargetSalesCount, Status = campaign.Status, Id = campaign.Id });
+                    ("UPDATE Campaign SET ProductCode=@ProductCode , TargetSalesCount = @TargetSalesCount , Status = @Status WHERE Id = @Id",
+                            new { ProductCode = campaign.ProductCode, TargetSalesCount = campaign.TargetSalesCount, Status = campaign.Status , Id = campaign.Id });
 
             if (affected == 0)
                 return false;

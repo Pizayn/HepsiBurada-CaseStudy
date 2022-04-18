@@ -21,7 +21,7 @@ namespace Discount.API.Repositories
                 (_configuration.GetValue<string>("DatabaseSettings:ConnectionString"));
 
             var campaign = await connection.QueryFirstOrDefaultAsync<Campaign>
-                ("SELECT * FROM Campaign WHERE ProductCode = @ProductCode AND Status = @Status", new { ProductCode = productCode , Status = 0});
+                ("SELECT * FROM Campaign WHERE ProductCode = @ProductCode AND Status = @Status AND TargetSalesCount > 0", new { ProductCode = productCode , Status = 1});
 
             if (campaign == null)
                 return new Campaign

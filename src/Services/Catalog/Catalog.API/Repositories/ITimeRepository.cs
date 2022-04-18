@@ -8,7 +8,6 @@ namespace Catalog.API.Repositories
     {
         Task<Time> GetTime();
         Task<bool> UpdateTime(Time time);
-        Task<IEnumerable<Time>> GetTimes();
 
     }
 }

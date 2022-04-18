@@ -14,25 +14,38 @@ namespace Discount.Grpc.Services
         private readonly IDiscountRepository _repository;
         private readonly IMapper _mapper;
         private readonly ILogger<DiscountService> _logger;
+        private readonly ITimeService _timeService;
 
-        public DiscountService(IDiscountRepository repository, IMapper mapper, ILogger<DiscountService> logger)
+
+        public DiscountService(IDiscountRepository repository, IMapper mapper, ILogger<DiscountService> logger, ITimeService timeService)
         {
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _timeService = timeService ?? throw new ArgumentNullException(nameof(timeService));
+
         }
 
         public override async Task<CampaignModel> GetCampaign(GetCampaignRequest request, ServerCallContext context)
         {
             var campaign = await _repository.GetCampaign(request.ProductCode);
+            var time = await _timeService.GetTime();
+           
             if (campaign == null)
             {
-                throw new RpcException(new Status(StatusCode.NotFound, $"Campaign with ProductName={request.ProductCode} is not found."));
+                return new CampaignModel();
+               
             }
             _logger.LogInformation("Campaign is retrieved for ProductCode : {productCode}, Amount : {targetSalesCount}", campaign.ProductCode, campaign.TargetSalesCount);
+            if (campaign != null && time.Hour > campaign.Duration)
+            {
+                campaign.Status = 0;
+                await _repository.UpdateCampaign(campaign);
+                return new CampaignModel();
 
-            var couponModel = _mapper.Map<CampaignModel>(campaign);
-            return couponModel;
+            }
+            var campaignModel = _mapper.Map<CampaignModel>(campaign);
+            return campaignModel;
         }
 
         public override async Task<CampaignModel> CreateCampaign(CreateCampaignRequest request, ServerCallContext context)
