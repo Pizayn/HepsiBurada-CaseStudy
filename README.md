@@ -5,7 +5,7 @@
 
 #### Catalog microservice which includes; 
 * ASP.NET **Grpc Server** application
-* Build a Highly Performant **inter-service gRPC Communication** with Basket Microservice
+* Build a Highly Performant **inter-service gRPC Communication** with Discount Microservice
 * ASP.NET Core Web API application 
 * REST API principles, CRUD operations
 * **MongoDB database** connection and containerization
@@ -14,7 +14,7 @@
 
 #### Discount microservice which includes;
 * ASP.NET **Grpc Server** application
-* Build a Highly Performant **inter-service gRPC Communication** with Basket Microservice
+* Build a Highly Performant **inter-service gRPC Communication** with Catalog Microservice
 * Exposing Grpc Services with creating **Protobuf messages**
 * Using **Dapper for micro-orm implementation** to simplify data access and ensure high performance
 * **PostgreSQL database** connection and containerization
