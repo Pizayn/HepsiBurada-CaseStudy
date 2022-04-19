@@ -28,7 +28,17 @@
 * Developing **CQRS with using MediatR, FluentValidation and AutoMapper packages**
 * **SqlServer database** connection and containerization
 * Using **Entity Framework Core ORM** and auto migrate to SqlServer when application startup
-	
+
+#### Time microservice which includes; 
+* ASP.NET Core Web API application 
+* REST API principles, CRUD operations
+* **MongoDB database** connection and containerization
+* Repository Pattern Implementation
+* Swagger Open API implementation
+
+#### Shopping.Aggregator microservice which includes; 
+* Making Microservices more **resilient Use IHttpClientFactory** to implement resilient HTTP requests
+* Communication with other microservices
 
 #### Docker Compose establishment with all microservices on docker;
 * Containerization of microservices
