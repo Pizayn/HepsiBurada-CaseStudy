@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Discount.API.Repositories;
+using Discount.Grpc.Repositories;
 using Discount.Grpc.Entities;
 using Discount.Grpc.Protos;
 using Grpc.Core;
@@ -29,11 +29,12 @@ namespace Discount.Grpc.Services
         public override async Task<CampaignModel> GetCampaign(GetCampaignRequest request, ServerCallContext context)
         {
             var campaign = await _repository.GetCampaign(request.ProductCode);
+            var model = new CampaignModel();
             var time = await _timeService.GetTime();
            
             if (campaign == null)
             {
-                return new CampaignModel();
+                return model ;
                
             }
             _logger.LogInformation("Campaign is retrieved for ProductCode : {productCode}, Amount : {targetSalesCount}", campaign.ProductCode, campaign.TargetSalesCount);

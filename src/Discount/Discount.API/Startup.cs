@@ -1,5 +1,7 @@
+using Discount.API.Profile;
 using Discount.API.Repositories;
 using Discount.API.Services;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -31,7 +33,9 @@ namespace Discount.API
                c.BaseAddress = new Uri(Configuration["ApiSettings:TimeUrl"]));
 
             services.AddScoped<IDiscountRepository, DiscountRepository>();
-            services.AddControllers();
+            services.AddControllers()
+               .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<CampaignValidator>());
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Discount.API", Version = "v1" });

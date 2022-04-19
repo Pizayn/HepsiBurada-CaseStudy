@@ -26,7 +26,11 @@ namespace TimeService.API.Controllers
         public async Task<ActionResult<Time>> IncreaseTime(int hour)
         {
             var existTime = await _timeRepository.GetTime();
-            existTime.Hour = hour;
+            if((existTime.Hour + hour > 24) /*|| hour <0*/ || hour == 0)
+            {
+                return BadRequest();
+            }
+            existTime.Hour += hour;
             await _timeRepository.UpdateTime(existTime);
 
             return Ok();

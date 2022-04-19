@@ -37,40 +37,6 @@ namespace Ordering.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<ActionResult<int>> CreateOrder([FromBody] CreateOrderCommand command)
         {
-            var campaign = await _discountGrpcService.GetCampaign(command.ProductCode);
-            var product = await _catalogGrpcService.GetProduct(command.ProductCode);
-            if (product == null)
-            {
-                return NotFound();
-            }
-            if (campaign != null)
-            {
-                if(campaign.TargetSalesCount < command.Quantity)
-                {
-                    _logger.LogError($"Target sales count must be greater than order quantity ");
-                    return BadRequest();
-                }
-
-                campaign.TargetSalesCount -= command.Quantity;
-                UpdateCampaignRequest updateCampaignRequest = new UpdateCampaignRequest();
-                updateCampaignRequest.Campaign = campaign;
-                await _discountGrpcService.UpdateCampaign(updateCampaignRequest);
-            }
-
-            if (product.Stock < command.Quantity)
-            {
-                _logger.LogError($"Product stock must be greater than order quantity ");
-                return BadRequest();
-            }
-            product.Stock -= command.Quantity;
-            UpdateProductRequest updateProductRequest = new UpdateProductRequest();
-            updateProductRequest.Product = product;
-            await _catalogGrpcService.UpdateProduct(updateProductRequest);
-
-
-
-
-
             var result = await _mediator.Send(command);
             return Ok(command);
         }

@@ -66,14 +66,9 @@ namespace Catalog.API.Controllers
                 _logger.LogError($"Product with code: {productCode}, not found.");
                 return NotFound();
             }
-            if(campaign != null)
+            if(!string.IsNullOrEmpty(campaign.ProductCode))
             {
-                //if(campaign.Duration > hour)
-                //{
-                //    UpdateCampaignRequest updateCampaignRequest = new UpdateCampaignRequest();
-                //    updateCampaignRequest.Campaign = campaign;
-                //    await _discountGrpcService.UpdateCampaign(updateCampaignRequest);
-                //}
+    
                 var descentRate = ((double)campaign.PriceManipulationLimit / (double)campaign.Duration) * hour;
                 product.Price -=  product.Price * descentRate /100;
 
@@ -93,6 +88,11 @@ namespace Catalog.API.Controllers
                 return BadRequest();
 
             }
+            if(!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+         
             await _repository.CreateProduct(product);
 
             return CreatedAtRoute("GetProduct", new { id = product.Id }, product);
@@ -102,7 +102,9 @@ namespace Catalog.API.Controllers
         [ProducesResponseType(typeof(Product), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> UpdateProduct([FromBody] Product product)
         {
-            return Ok(await _repository.UpdateProduct(product));
+            var existProduct = await _repository.GetProductByProductCode(product.ProductCode);
+            existProduct.Stock = product.Stock;
+            return Ok(await _repository.UpdateProduct(existProduct));
         }
 
         [HttpDelete("{id:length(24)}", Name = "DeleteProduct")]
@@ -113,17 +115,5 @@ namespace Catalog.API.Controllers
         }
 
 
-        [HttpGet("[action]/{hour}", Name = "IncreaseTime")]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        [ProducesResponseType(typeof(Time), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<Time>> IncreaseTime(int hour)
-        {
-            var existTime = await _timeRepository.GetTime();
-            existTime.Hour = hour;
-            await _timeRepository.UpdateTime(existTime);
-
-               return Ok();
-        }
-       
     }
 }

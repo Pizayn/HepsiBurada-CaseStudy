@@ -6,6 +6,7 @@ namespace Discount.API.Repositories
     public interface IDiscountRepository
     {
         Task<Campaign> GetCampaign(string productCode);
+        Task<Campaign> GetCampaignByName(string name);
 
         Task<bool> CreateCampaign(Campaign campaign);
         Task<bool> UpdateCampaign(Campaign campaign);

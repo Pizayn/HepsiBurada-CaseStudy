@@ -38,7 +38,7 @@ namespace Shopping.Aggregator.Controllers
             {
                 return BadRequest("Stock must be greater than order");
             }
-            if(campaign != null && campaign.TargetSalesCount <= model.Quantity)
+            if(campaign != null && campaign.TargetSalesCount >= model.Quantity)
             {
                 campaign.TargetSalesCount -= model.Quantity;
                await _discountService.UpdateCampaign(campaign);

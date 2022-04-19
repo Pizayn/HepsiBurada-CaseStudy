@@ -4,7 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Npgsql;
 using System;
 using System.Threading.Tasks;
-namespace Discount.API.Repositories
+namespace Discount.Grpc.Repositories
 {
     public class DiscountRepository : IDiscountRepository
     {
@@ -23,9 +23,7 @@ namespace Discount.API.Repositories
             var campaign = await connection.QueryFirstOrDefaultAsync<Campaign>
                 ("SELECT * FROM Campaign WHERE ProductCode = @ProductCode AND Status = @Status AND TargetSalesCount > 0", new { ProductCode = productCode , Status = 1});
 
-            if (campaign == null)
-                return new Campaign
-                { ProductCode = "No Discount", TargetSalesCount = 0 };
+           
 
             return campaign;
         }
@@ -51,8 +49,8 @@ namespace Discount.API.Repositories
             using var connection = new NpgsqlConnection(_configuration.GetValue<string>("DatabaseSettings:ConnectionString"));
 
             var affected = await connection.ExecuteAsync
-                    ("UPDATE Campaign SET ProductCode=@ProductCode , TargetSalesCount = @TargetSalesCount, @Status WHERE Id = @Id",
-                            new { ProductCode = campaign.ProductCode, TargetSalesCount = campaign.TargetSalesCount,Status=campaign.Status, Id = campaign.Id });
+                    ("UPDATE Campaign SET ProductCode=@ProductCode , TargetSalesCount = @TargetSalesCount , Status = @Status WHERE Id = @Id",
+                            new { ProductCode = campaign.ProductCode, TargetSalesCount = campaign.TargetSalesCount, Status = campaign.Status, Id = campaign.Id });
 
             if (affected == 0)
                 return false;

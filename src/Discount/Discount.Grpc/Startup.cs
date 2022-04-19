@@ -1,4 +1,4 @@
-﻿using Discount.API.Repositories;
+﻿using Discount.Grpc.Repositories;
 using Discount.Grpc.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -18,12 +18,16 @@ namespace Discount.Grpc
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
 
-        public IConfiguration Configuration { get; }
+        public Startup(IConfiguration configuration)
+        {
+            Configuration = configuration;
+        }
 
+        public IConfiguration Configuration { get; }
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddHttpClient<ITimeService, TimeService>(c =>
-             c.BaseAddress = new Uri(Configuration["ApiSettings:TimeUrl"]));
+               c.BaseAddress = new Uri(Configuration["ApiSettings:TimeUrl"]));
 
             services.AddScoped<IDiscountRepository, DiscountRepository>();
             services.AddAutoMapper(typeof(Startup));

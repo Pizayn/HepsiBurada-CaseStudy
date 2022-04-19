@@ -6,6 +6,6 @@ namespace Shopping.Aggregator.Services
     public interface IDiscountService
     {
         Task<CampaignModel> GetCampaign(string productCode);
-        Task<CampaignModel> UpdateCampaign(CampaignModel model);
+        Task UpdateCampaign(CampaignModel model);
     }
 }

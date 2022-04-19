@@ -6,7 +6,7 @@ namespace Shopping.Aggregator.Services
     public interface ICatalogService
     {
         Task<ProductModel> GetProductByProductCode(string productCode);
-        Task<ProductModel> UpdateProduct(ProductModel model);
+        Task UpdateProduct(ProductModel model);
 
     }
 }

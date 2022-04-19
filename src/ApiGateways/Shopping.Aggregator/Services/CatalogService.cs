@@ -22,10 +22,15 @@ namespace Shopping.Aggregator.Services
         public async Task<ProductModel> GetProductByProductCode(string productCode)
         {
             var response = await _client.GetAsync($"/api/v1/Catalog/GetProductByProductCode/{productCode}");
-            return await response.ReadContentAs<ProductModel>();
+            if (response.ReasonPhrase == "OK")
+            {
+                return await response.ReadContentAs<ProductModel>();
+
+            }
+            return null;
         }
 
-        public async Task<ProductModel> UpdateProduct(ProductModel model)
+        public async Task UpdateProduct(ProductModel model)
         {
             var modelJson = new StringContent(
         JsonSerializer.Serialize(model),
@@ -33,7 +38,7 @@ namespace Shopping.Aggregator.Services
         Application.Json);
             var response = await _client.PutAsync($"/api/v1/Catalog", modelJson);
             if (response.IsSuccessStatusCode)
-                return await response.ReadContentAs<ProductModel>();
+                return;
             else
             {
                 throw new Exception("Something went wrong when calling api.");

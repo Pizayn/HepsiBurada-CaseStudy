@@ -23,18 +23,23 @@ namespace Shopping.Aggregator.Services
         public async Task<CampaignModel> GetCampaign(string productCode)
         {
             var response = await _client.GetAsync($"/api/v1/Campaign/{productCode}");
-            return await response.ReadContentAs<CampaignModel>();
+            if (response.ReasonPhrase == "OK")
+            {
+                return await response.ReadContentAs<CampaignModel>();
+
+            }
+            return null;
         }
 
-        public async Task<CampaignModel> UpdateCampaign(CampaignModel model)
+        public async Task UpdateCampaign(CampaignModel model)
         {
             var modelJson = new StringContent(
         JsonSerializer.Serialize(model),
         Encoding.UTF8,
         Application.Json);
-            var response = await _client.PutAsync($"/api/v1/Discount", modelJson);
+            var response = await _client.PutAsync($"/api/v1/Campaign", modelJson);
             if (response.IsSuccessStatusCode)
-                return await response.ReadContentAs<CampaignModel>();
+                return;
             else
             {
                 throw new Exception("Something went wrong when calling api.");

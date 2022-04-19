@@ -23,13 +23,22 @@ namespace Discount.API.Repositories
             var campaign = await connection.QueryFirstOrDefaultAsync<Campaign>
                 ("SELECT * FROM Campaign WHERE ProductCode = @ProductCode and Status = @Status AND TargetSalesCount > 0", new { ProductCode = productCode, Status=1});
 
-            if (campaign == null)
-                return new Campaign
-                { ProductCode = "No Discount", TargetSalesCount = 0 };
+            
 
             return campaign;
         }
+        public async Task<Campaign> GetCampaignByName(string name)
+        {
+            using var connection = new NpgsqlConnection
+                (_configuration.GetValue<string>("DatabaseSettings:ConnectionString"));
 
+            var campaign = await connection.QueryFirstOrDefaultAsync<Campaign>
+                ("SELECT * FROM Campaign WHERE Name = @Name ", new { Name = name});
+
+
+
+            return campaign;
+        }
         public async Task<bool> CreateCampaign(Campaign campaign)
         {
             using var connection = new NpgsqlConnection
