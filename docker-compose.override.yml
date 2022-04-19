@@ -81,3 +81,13 @@ services:
         - "8004:80"
 
  
+ timeservice.api:
+    container_name: timeservice.api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - "DatabaseSettings:ConnectionString=mongodb://catalogdb:27017"
+    depends_on:
+      - catalogdb
+    ports:
+      - "8009:80"
+
